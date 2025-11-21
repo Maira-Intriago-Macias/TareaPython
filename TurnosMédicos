@@ -1,0 +1,102 @@
+class SistemaTurnosMedicos:
+    def __init__(self):
+        self.cola_pacientes = []    
+    def agregar_paciente(self):
+        """Agrega un nuevo paciente al final de la cola"""
+        print("   AGREGAR NUEVO PACIENTE")
+        nombre = input("Nombre del paciente: ").strip().title()
+        # Validar edad
+        while True:
+            try:
+                edad = int(input("Edad del paciente: "))
+                if edad <= 0 or edad > 120:
+                    print("❌ Por favor ingresa una edad válida (1-120)")
+                    continue
+                break
+            except ValueError:
+                print("❌ Por favor ingresa un número válido para la edad")
+        print("\nEspecialidades disponibles:")
+        print("1. Pediatría")
+        print("2. Clínica Médica")
+        print("3. Cardiología")
+        print("4. Traumatología")
+        print("5. Dermatología")
+        # Validar especialidad
+        while True:
+            try:
+                opcion = int(input("\nSelecciona la especialidad (1-5): "))
+                if 1 <= opcion <= 5:
+                    especialidades = {
+                        1: "Pediatría",
+                        2: "Clínica Médica", 
+                        3: "Cardiología",
+                        4: "Traumatología",
+                        5: "Dermatología"
+                    }
+                    especialidad = especialidades[opcion]
+                    break
+                else:
+                    print("❌ Por favor selecciona una opción válida (1-5)")
+            except ValueError:
+                print("❌ Por favor ingresa un número válido")
+        # Crear tupla del paciente y agregar a la cola
+        paciente = (nombre, edad, especialidad)
+        self.cola_pacientes.append(paciente)
+        print(f"Paciente {nombre} agregado exitosamente!")
+        print(f"   📋 Turno: {len(self.cola_pacientes)} | Especialidad: {especialidad}")
+    def atender_paciente(self):
+        """Atiende al primer paciente en la cola"""
+        if not self.cola_pacientes:
+            print("No hay pacientes en espera")
+            return
+        paciente = self.cola_pacientes.pop(0)
+        nombre, edad, especialidad = paciente
+        print("   ATENDIENDO PACIENTE")
+        print(f"Nombre: {nombre}")
+        print(f"Edad: {edad} años")
+        print(f"Especialidad: {especialidad}")
+        print(f"{nombre} ha sido atendido exitosamente!")
+        if self.cola_pacientes:
+            print(f"Pacientes restantes en espera: {len(self.cola_pacientes)}")
+    def mostrar_pacientes(self):
+        """Muestra todos los pacientes en espera"""
+        if not self.cola_pacientes:
+            print("La cola de espera está vacía")
+            return
+        print("   PACIENTES EN ESPERA")
+        for i, paciente in enumerate(self.cola_pacientes, 1):
+            nombre, edad, especialidad = paciente
+            print(f"{i}.{nombre} | {edad} años | {especialidad}")
+        print(f"Total de pacientes en espera: {len(self.cola_pacientes)}")
+    def mostrar_menu(self):
+        """Muestra el menú principal"""
+        print("   SISTEMA DE TURNOS MÉDICOS")
+        print("1. Agregar paciente")
+        print("2. Atender siguiente paciente") 
+        print("3. Ver pacientes en espera")
+        print("4. Salir")
+    def ejecutar(self):
+        """Ejecuta el sistema principal"""
+        print("¡Bienvenido al Sistema de Turnos Médicos!")
+        while True:
+            self.mostrar_menu()
+            try:
+                opcion = int(input("\nSelecciona una opción (1-4): "))
+                if opcion == 1:
+                    self.agregar_paciente()
+                elif opcion == 2:
+                    self.atender_paciente()
+                elif opcion == 3:
+                    self.mostrar_pacientes()
+                elif opcion == 4:
+                    print("¡Gracias por usar el Sistema de Turnos Médicos!")
+                    print("¡Hasta pronto!")
+                    break
+                else:
+                    print("❌ Opción no válida. Por favor selecciona 1-4")
+            except ValueError:
+                print("❌ Por favor ingresa un número válido (1-4)")
+# Ejecutar el sistema
+if __name__ == "__main__":
+    sistema = SistemaTurnosMedicos()
+    sistema.ejecutar()
