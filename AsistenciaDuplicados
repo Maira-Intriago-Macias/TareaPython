@@ -1,0 +1,110 @@
+from datetime import datetime
+class ControlAsistencia:
+    def __init__(self):
+        self.asistentes = set()  # Para evitar duplicados
+        self.registro_horas = {}  # Para guardar hora de ingreso
+    def registrar_asistencia(self):
+        """Registra la asistencia de una persona"""
+        print("   REGISTRAR ASISTENCIA")
+        nombre = input("Nombre del asistente: ").strip().title()
+        if not nombre:
+            print("❌ El nombre no puede estar vacío")
+            return
+        # Verificar si ya asistió
+        if nombre in self.asistentes:
+            print(f"{nombre} ya está registrado en el seminario")
+            hora_registro = self.registro_horas.get(nombre, "Hora no disponible")
+            print(f"Hora de registro anterior: {hora_registro}")
+            return
+        # Obtener hora actual
+        hora_actual = datetime.now().strftime("%H:%M:%S")
+        # Registrar asistencia
+        self.asistentes.add(nombre)
+        self.registro_horas[nombre] = hora_actual
+        print(f"¡Asistencia registrada exitosamente!")
+        print(f"Asistente: {nombre}")
+        print(f"Hora de ingreso: {hora_actual}")
+        print(f"Total de asistentes únicos: {len(self.asistentes)}")
+    def verificar_asistencia(self):
+        """Verifica si una persona ya asistió"""
+        print("   VERIFICAR ASISTENCIA")
+        nombre = input("Nombre a verificar: ").strip().title()
+        if not nombre:
+            print("❌ El nombre no puede estar vacío")
+            return
+        if nombre in self.asistentes:
+            hora_registro = self.registro_horas.get(nombre, "Hora no disponible")
+            print(f"{nombre} SÍ está registrado en el seminario")
+            print(f"Hora de ingreso: {hora_registro}")
+        else:
+            print(f"\n❌ {nombre} NO está registrado en el seminario")
+    def mostrar_estadisticas(self):
+        """Muestra el número total de asistentes y la lista completa"""
+        print("   ESTADÍSTICAS DEL SEMINARIO")
+        total_asistentes = len(self.asistentes)
+        if total_asistentes == 0:
+            print("Aún no hay asistentes registrados")
+            return
+        print(f"Total de asistentes únicos: {total_asistentes}")
+        print("Lista completa de asistentes:")       
+        # Ordenar asistentes alfabéticamente para mejor visualización
+        asistentes_ordenados = sorted(self.asistentes)
+        for i, asistente in enumerate(asistentes_ordenados, 1):
+            hora = self.registro_horas.get(asistente, "N/A")
+            print(f"{i:2d}. {asistente} | {hora}")
+    def buscar_asistente(self):
+        """Busca asistentes por nombre (búsqueda parcial)"""
+        print("   BUSCAR ASISTENTE")
+        busqueda = input("Ingresa parte del nombre a buscar: ").strip().title()
+        if not busqueda:
+            print("❌ La búsqueda no puede estar vacía")
+            return
+        resultados = []
+        for asistente in self.asistentes:
+            if busqueda in asistente:
+                hora = self.registro_horas.get(asistente, "N/A")
+                resultados.append((asistente, hora))
+        if resultados:
+            print(f"Se encontraron {len(resultados)} resultado(s):")
+            for i, (asistente, hora) in enumerate(resultados, 1):
+                print(f"{i}. {asistente} | {hora}")
+        else:
+            print(f"\n❌ No se encontraron asistentes con '{busqueda}'")
+    def mostrar_menu(self):
+        """Muestra el menú principal"""
+        print("   CONTROL DE ASISTENCIA - SEMINARIO")
+        print("1. Registrar asistencia")
+        print("2. Verificar si ya asistió")
+        print("3. Mostrar estadísticas")
+        print("4. Buscar asistente")
+        print("5. Salir")
+    def ejecutar(self):
+        """Ejecuta el sistema principal"""
+        print("¡Bienvenido al Sistema de Control de Asistencia!")
+        while True:
+            self.mostrar_menu()
+            try:
+                opcion = input("\nSelecciona una opción (1-5): ").strip()
+                if opcion == "1":
+                    self.registrar_asistencia()
+                elif opcion == "2":
+                    self.verificar_asistencia()
+                elif opcion == "3":
+                    self.mostrar_estadisticas()
+                elif opcion == "4":
+                    self.buscar_asistente()
+                elif opcion == "5":
+                    print("¡Gracias por usar el Sistema de Control de Asistencia!")
+                    print("¡Que tengas un excelente seminario!")
+                    break
+                else:
+                    print("❌ Opción no válida. Por favor selecciona 1-5")
+            except KeyboardInterrupt:
+                print("Programa interrumpido por el usuario")
+                break
+            except Exception as e:
+                print(f"❌ Error inesperado: {e}")
+# Ejecutar el sistema
+if __name__ == "__main__":
+    sistema = ControlAsistencia()
+    sistema.ejecutar()
