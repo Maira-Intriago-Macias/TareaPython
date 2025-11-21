@@ -1,0 +1,168 @@
+class InventarioTienda:
+    def __init__(self):
+        self.inventario = {}  # {producto: cantidad}
+        self.agotados = set()  # Productos sin stock    
+    def agregar_producto(self):
+        """Agrega un nuevo producto al inventario"""
+        print("   AGREGAR PRODUCTO")
+        producto = input("Nombre del producto: ").strip().title()
+        if not producto:
+            print("❌ El nombre del producto no puede estar vacío")
+            return
+        if producto in self.inventario:
+            print(f"{producto} ya existe en el inventario")
+            print(f"Cantidad actual: {self.inventario[producto]}")
+            return
+        # Validar cantidad
+        while True:
+            try:
+                cantidad = int(input("Cantidad inicial: "))
+                if cantidad < 0:
+                    print("❌ La cantidad no puede ser negativa")
+                    continue
+                break
+            except ValueError:
+                print("❌ Por favor ingresa un número válido")
+        # Agregar producto
+        self.inventario[producto] = cantidad
+        # Si la cantidad es 0, agregar a agotados
+        if cantidad == 0:
+            self.agotados.add(producto)
+            print(f"Producto agregado pero SIN STOCK")
+        else:
+            # Si estaba en agotados y ahora tiene stock, removerlo
+            if producto in self.agotados:
+                self.agotados.remove(producto)
+            print(f"Producto agregado exitosamente!")
+        print(f"Producto: {producto}")
+        print(f"Cantidad: {cantidad}")
+    def vender_producto(self):
+        """Vende productos (resta cantidad del inventario)"""
+        print("   VENDER PRODUCTO")
+        if not self.inventario:
+            print("El inventario está vacío")
+            return
+        producto = input("Nombre del producto a vender: ").strip().title()
+        if producto not in self.inventario:
+            print(f"❌ {producto} no existe en el inventario")
+            return
+        cantidad_actual = self.inventario[producto]
+        if cantidad_actual == 0:
+            print(f"❌ {producto} está AGOTADO. No se puede vender")
+            return
+        print(f"Stock disponible de {producto}: {cantidad_actual}")
+        # Validar cantidad a vender
+        while True:
+            try:
+                cantidad_vender = int(input("Cantidad a vender: "))
+                if cantidad_vender <= 0:
+                    print("❌ La cantidad debe ser mayor a 0")
+                    continue
+                if cantidad_vender > cantidad_actual:
+                    print(f"❌ No hay suficiente stock. Solo hay {cantidad_actual} unidades")
+                    continue
+                break
+            except ValueError:
+                print("❌ Por favor ingresa un número válido")
+        # Realizar venta
+        nueva_cantidad = cantidad_actual - cantidad_vender
+        self.inventario[producto] = nueva_cantidad
+        print(f"Venta realizada exitosamente!")
+        print(f"Producto: {producto}")
+        print(f"Vendido: {cantidad_vender} unidades")
+        print(f"Nuevo stock: {nueva_cantidad}")
+        # Verificar si se agotó
+        if nueva_cantidad == 0:
+            self.agotados.add(producto)
+            print("¡ATENCIÓN! Este producto se ha AGOTADO")
+        else:
+            # Si tenía stock y ahora también, asegurarse de que no esté en agotados
+            if producto in self.agotados:
+                self.agotados.remove(producto)
+    def reponer_stock(self):
+        """Muestra el inventario completo"""
+        print("   INVENTARIO COMPLETO")
+        if not self.inventario:
+            print("El inventario está vacío")
+            return
+        # Ordenar productos alfabéticamente
+        productos_ordenados = sorted(self.inventario.items())
+        total_productos = len(self.inventario)
+        total_stock = sum(self.inventario.values())
+        total_agotados = len(self.agotados)
+        print(f"Resumen: {total_productos} productos | {total_stock} unidades | {total_agotados} agotados")
+        for producto, cantidad in productos_ordenados:
+            estado = "🔴 AGOTADO" if producto in self.agotados else "🟢 DISPONIBLE"
+            print(f"{producto:20} | {cantidad:3d} unidades | {estado}")
+    def mostrar_agotados(self):
+        """Muestra solo los productos agotados"""
+        print("   PRODUCTOS AGOTADOS")
+        if not self.agotados:
+            print("No hay productos agotados")
+            return
+        agotados_ordenados = sorted(self.agotados)
+        print(f"Total de productos agotados: {len(self.agotados)}")
+        for i, producto in enumerate(agotados_ordenados, 1):
+            print(f"{i}. {producto}")
+    def buscar_producto(self):
+        """Busca productos en el inventario"""
+        print("   BUSCAR PRODUCTO")
+        if not self.inventario:
+            print("El inventario está vacío")
+            return
+        busqueda = input("Ingresa parte del nombre del producto: ").strip().title()
+        if not busqueda:
+            print("❌ La búsqueda no puede estar vacía")
+            return
+        resultados = []
+        for producto, cantidad in self.inventario.items():
+            if busqueda in producto:
+                estado = "🔴 AGOTADO" if producto in self.agotados else "🟢 DISPONIBLE"
+                resultados.append((producto, cantidad, estado))
+        if resultados:
+            print(f"Se encontraron {len(resultados)} resultado(s):")
+            for producto, cantidad, estado in resultados:
+                print(f"{producto:20} | {cantidad:3d} unidades | {estado}")
+        else:
+            print(f"No se encontraron productos con '{busqueda}'")
+    def mostrar_menu(self):
+        """Muestra el menú principal"""
+        print("   SISTEMA DE INVENTARIO - TIENDA")
+        print("1. Agregar producto")
+        print("2. Vender producto")
+        print("3. Mostrar inventario completo")
+        print("4. Mostrar productos agotados")
+        print("5. Buscar producto")
+        print("6. Salir")
+    def ejecutar(self):
+        """Ejecuta el sistema principal"""
+        print("¡Bienvenido al Sistema de Inventario!")
+        while True:
+            self.mostrar_menu()
+            try:
+                opcion = input("Selecciona una opción (1-6): ").strip()
+                if opcion == "1":
+                    self.agregar_producto()
+                elif opcion == "2":
+                    self.vender_producto()
+                elif opcion == "3":
+                    self.mostrar_inventario()
+                elif opcion == "4":
+                    self.mostrar_agotados()
+                elif opcion == "5":
+                    self.buscar_producto()
+                elif opcion == "6":
+                    print("¡Gracias por usar el Sistema de Inventario!")
+                    print("¡Hasta pronto!")
+                    break
+                else:
+                    print("❌ Opción no válida. Por favor selecciona 1-7")
+            except KeyboardInterrupt:
+                print("Programa interrumpido por el usuario")
+                break
+            except Exception as e:
+                print(f"❌ Error inesperado: {e}")
+# Ejecutar el sistema
+if __name__ == "__main__":
+    sistema = InventarioTienda()
+    sistema.ejecutar()
