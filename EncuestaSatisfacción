@@ -1,0 +1,159 @@
+class SistemaEncuestas:
+    def __init__(self):
+        self.respuestas = []  # Lista de tuplas: (cliente, puntuación, comentario)    
+    def agregar_encuesta(self):
+        """Agrega una nueva respuesta de encuesta"""
+        print("   NUEVA ENCUESTA DE SATISFACCIÓN")
+        cliente = input("Nombre del cliente: ").strip().title()
+        if not cliente:
+            print("❌ El nombre del cliente no puede estar vacío")
+            return
+        # Validar puntuación (1-10)
+        while True:
+            try:
+                puntuacion = int(input("Puntuación (1-10): "))
+                if 1 <= puntuacion <= 10:
+                    break
+                else:
+                    print("❌ La puntuación debe estar entre 1 y 10")
+            except ValueError:
+                print("❌ Por favor ingresa un número válido")
+        comentario = input("Comentario (opcional): ").strip()
+        # Crear tupla de respuesta
+        respuesta = (cliente, puntuacion, comentario)
+        self.respuestas.append(respuesta)
+        print(f"¡Encuesta registrada exitosamente!")
+        print(f"Cliente: {cliente}")
+        print(f"Puntuación: {puntuacion}/10")
+        if comentario:
+            print(f"Comentario: {comentario}")
+    def calcular_media_satisfaccion(self):
+        """Calcula y muestra la media de satisfacción"""
+        print("   MEDIA DE SATISFACCIÓN")
+        if not self.respuestas:
+            print("No hay encuestas registradas")
+            return
+        total_puntuaciones = sum(respuesta[1] for respuesta in self.respuestas)
+        media = total_puntuaciones / len(self.respuestas)
+        print(f"Total de encuestas: {len(self.respuestas)}")
+        print(f"Puntuación media: {media:.2f}/10")
+        # Mostrar interpretación de la media
+        if media >= 9:
+            print("Excelente nivel de satisfacción!")
+            print("   Los clientes están muy contentos")
+        elif media >= 8:
+            print("Buen nivel de satisfacción!")
+            print("   Los clientes están satisfechos")
+        elif media >= 6:
+            print("Satisfacción regular")
+            print("   Hay espacio para mejorar")
+        elif media >= 4:
+            print("Satisfacción baja")
+            print("   Se necesitan mejoras urgentes")
+        else:
+            print("Satisfacción muy baja!")
+            print("Situación crítica - revisar servicios")
+        # Distribución de puntuaciones
+        print("Distribución de puntuaciones:")
+        for i in range(10, 0, -1):
+            count = sum(1 for respuesta in self.respuestas if respuesta[1] == i)
+            if count > 0:
+                bar = "█" * count
+                print(f"   {i:2d}: {bar} ({count})")
+    def mostrar_comentarios_negativos(self):
+        """Muestra los comentarios con puntuación menor a 5"""
+        print("   COMENTARIOS NEGATIVOS")
+        print("   (Puntuación < 5/10)")
+        comentarios_negativos = [
+            respuesta for respuesta in self.respuestas 
+            if respuesta[1] < 5
+        ]
+        if not comentarios_negativos:
+            print("No hay comentarios negativos")
+            print("¡Buen trabajo!")
+            return
+        print(f"Se encontraron {len(comentarios_negativos)} comentario(s) negativo(s)")    
+        for i, (cliente, puntuacion, comentario) in enumerate(comentarios_negativos, 1):
+            print(f"Comentario negativo #{i}:")
+            print(f"Cliente: {cliente}")
+            print(f"Puntuación: {puntuacion}/10")
+            print(f"Comentario: {comentario if comentario else 'Sin comentario'}")
+    def mostrar_todas_encuestas(self):
+        """Muestra todas las encuestas registradas"""
+        print("   TODAS LAS ENCUESTAS")
+        if not self.respuestas:
+            print("No hay encuestas registradas")
+            return
+        print(f"Total de encuestas: {len(self.respuestas)}")
+        for i, (cliente, puntuacion, comentario) in enumerate(self.respuestas, 1):    
+            print(f"#{i:2d} {cliente}")
+            print(f"Puntuación: {puntuacion}/10")
+            if comentario:
+                print(f"Comentario: {comentario}")
+    def mostrar_estadisticas_avanzadas(self):
+        """Muestra estadísticas detalladas"""
+        print("   ESTADÍSTICAS AVANZADAS")
+        if not self.respuestas:
+            print("No hay encuestas registradas")
+            return
+        total = len(self.respuestas)
+        positivas = sum(1 for r in self.respuestas if r[1] >= 7)
+        negativas = sum(1 for r in self.respuestas if r[1] < 5)
+        regulares = total - positivas - negativas
+        media = sum(r[1] for r in self.respuestas) / total
+        print(f"Total de encuestas: {total}")
+        print(f"Puntuación media: {media:.2f}/10")
+        print(f"Máxima puntuación: {max(r[1] for r in self.respuestas)}/10")
+        print(f"Mínima puntuación: {min(r[1] for r in self.respuestas)}/10")
+        print(f"Distribución:")
+        print(f" 🟢 Positivas (7-10): {positivas} ({positivas/total*100:.1f}%)")
+        print(f" 🟡 Regulares (5-6): {regulares} ({regulares/total*100:.1f}%)")
+        print(f" 🔴 Negativas (1-4): {negativas} ({negativas/total*100:.1f}%)")        
+        # Clientes más satisfechos e insatisfechos
+        if total >= 3:
+            print(f"Top 3 clientes más satisfechos:")
+            top_satisfechos = sorted(self.respuestas, key=lambda x: x[1], reverse=True)[:3]
+            for cliente, puntuacion, _ in top_satisfechos:
+                print(f"{cliente}: {puntuacion}/10")
+    def mostrar_menu(self):
+        """Muestra el menú principal"""
+        print("   SISTEMA DE ENCUESTAS DE SATISFACCIÓN")
+        print("1. Agregar nueva encuesta")
+        print("2. Calcular media de satisfacción")
+        print("3. Mostrar comentarios negativos")
+        print("4. Mostrar todas las encuestas")
+        print("5. Mostrar estadísticas avanzadas")
+        print("6. Salir")
+    def ejecutar(self):
+        """Ejecuta el sistema principal"""
+        print("¡Bienvenido al Sistema de Encuestas de Satisfacción!")
+        print("Evalúa la satisfacción de tus clientes del 1 al 10")
+        while True:
+            self.mostrar_menu()
+            try:
+                opcion = input("\nSelecciona una opción (1-6): ").strip()
+                if opcion == "1":
+                    self.agregar_encuesta()
+                elif opcion == "2":
+                    self.calcular_media_satisfaccion()
+                elif opcion == "3":
+                    self.mostrar_comentarios_negativos()
+                elif opcion == "4":
+                    self.mostrar_todas_encuestas()
+                elif opcion == "5":
+                    self.mostrar_estadisticas_avanzadas()
+                elif opcion == "6":
+                    print("¡Gracias por usar el Sistema de Encuestas!")
+                    print("¡Hasta pronto!")
+                    break
+                else:
+                    print("❌ Opción no válida. Por favor selecciona 1-6")
+            except KeyboardInterrupt:
+                print("Programa interrumpido por el usuario")
+                break
+            except Exception as e:
+                print(f"❌ Error inesperado: {e}")
+# Ejecutar el sistema
+if __name__ == "__main__":
+    sistema = SistemaEncuestas()
+    sistema.ejecutar()
